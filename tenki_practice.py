@@ -3,27 +3,70 @@ import requests # リクエストするための機能をインポート
 from datetime import datetime # 現在時刻などの時間を扱う機能をインポート
 import pandas as pd # データフレームを扱う機能をインポート
 
-# 選択肢を作成
+# 47都道府県の地域コードリスト
 city_code_list = {
-    "東京都":"130010",
-    "大阪" : "270000",
+    "北海道": "016010",
+    "青森県": "020010",
+    "岩手県": "030010",
+    "宮城県": "040010",
+    "秋田県": "050010",
+    "山形県": "060010",
+    "福島県": "070010",
+    "茨城県": "080010",
+    "栃木県": "090010",
+    "群馬県": "100010",
+    "埼玉県": "110010",
+    "千葉県": "120010",
+    "東京都": "130010",
+    "神奈川県": "140010",
+    "新潟県": "150010",
+    "富山県": "160010",
+    "石川県": "170010",
+    "福井県": "180010",
+    "山梨県": "190010",
+    "長野県": "200010",
+    "岐阜県": "210010",
+    "静岡県": "220010",
+    "愛知県": "230010",
+    "三重県": "240010",
+    "滋賀県": "250010",
+    "京都府": "260010",
+    "大阪府": "270000",
+    "兵庫県": "280010",
+    "奈良県": "290010",
+    "和歌山県": "300010",
+    "鳥取県": "310010",
+    "島根県": "320010",
+    "岡山県": "330010",
+    "広島県": "340010",
+    "山口県": "350010",
+    "徳島県": "360010",
+    "香川県": "370000",
+    "愛媛県": "380010",
+    "高知県": "390010",
+    "福岡県": "400010",
+    "佐賀県": "410010",
+    "長崎県": "420010",
+    "熊本県": "430010",
+    "大分県": "440010",
+    "宮崎県": "450010",
+    "鹿児島県": "460010",
+    "沖縄県": "471010"
 }
+
 # 選択肢のデフォルトを設定
 city_code_index = "東京都"
 
-
 st.title("天気アプリ") # タイトル
 st.write("調べたい地域を選んでください。") # サブタイトル
-city_code_index = st.selectbox("地域を選んでください。",city_code_list.keys()) # 選択肢のキーをst.selectboxで選択し、city_code_indexに代入
+city_code_index = st.selectbox("地域を選んでください。", city_code_list.keys()) # 選択肢のキーをst.selectboxで選択し、city_code_indexに代入
 city_code = city_code_list[city_code_index] # 選択したキーからAPIのリクエストに使うcityコードに変換し、city_codeに代入
-current_city_code = st.empty() # 選択中の地域を補油時するための箱をcurrent_city_codeとして用意
-current_city_code.write("選択中の地域:" + city_code_index) # 用意した箱に選択肢した地域を代入し、表示させる
+current_city_code = st.empty() # 選択中の地域を保持するための箱をcurrent_city_codeとして用意
+current_city_code.write("選択中の地域: " + city_code_index) # 用意した箱に選択肢した地域を代入し、表示させる
 
 url = "https://weather.tsukumijima.net/api/forecast/city/" + city_code # APIにリクエストするURLを作成
 
-
 response = requests.get(url) # 作成したリクエスト用URLでアクセスして、responseに代入
-
 weather_json = response.json() # responseにjson形式の天気のデータが返ってくるので、response.json()をweather_jsonに代入
 now_hour = datetime.now().hour # 現在の天気情報取得のために、現在時刻の時間をnow_hourに代入
 
@@ -47,9 +90,9 @@ weather_now_text = "現在の降水確率 : " + weather_now
 st.write(weather_now_text) # 現在時刻の降水確率を表示
 
 # 今日、明日、明後日の降水確率をDadaFrameに代入
-df1 = pd.DataFrame(weather_json['forecasts'][0]['chanceOfRain'],index=["今日"]) # index名を今日という文字列に設定
-df2 = pd.DataFrame(weather_json['forecasts'][1]['chanceOfRain'],index=["明日"]) # index名を明日という文字列に設定
-df3 = pd.DataFrame(weather_json['forecasts'][2]['chanceOfRain'],index=["明後日"]) # index名を明後日という文字列に設定
+df1 = pd.DataFrame(weather_json['forecasts'][0]['chanceOfRain'], index=["今日"]) # index名を今日という文字列に設定
+df2 = pd.DataFrame(weather_json['forecasts'][1]['chanceOfRain'], index=["明日"]) # index名を明日という文字列に設定
+df3 = pd.DataFrame(weather_json['forecasts'][2]['chanceOfRain'], index=["明後日"]) # index名を明後日という文字列に設定
 
-df = pd.concat([df1,df2,df3]) # 今日、明日、明後日の降水確率を結合して一覧にしてdfに代入
+df = pd.concat([df1, df2, df3]) # 今日、明日、明後日の降水確率を結合して一覧にしてdfに代入
 st.dataframe(df) # 一覧にした降水確率を表示
